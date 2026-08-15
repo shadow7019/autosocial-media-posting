@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  accounts  Account[]
+  posts     Post[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String   // e.g., 'youtube', 'tiktok'
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         Int?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Post {
+  id             String      @id @default(cuid())
+  userId         String
+  title          String?
+  description    String?
+  filePath       String
+  status         PostStatus  @default(PENDING)
+  scheduledFor   DateTime?
+  uploadedAt     DateTime?
+  platformPostId String?     // ID of the post on the social platform
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+enum PostStatus {
+  PENDING
+  SCHEDULED
+  UPLOADING
+  UPLOADED
+  FAILED
+}
