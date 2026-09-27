@@ -1,0 +1,14 @@
+{
+  "name": "autosocial-daemon",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot index.ts",
+    "start": "bun index.ts"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "socket.io": "^4.8.1"
+  }
+}
